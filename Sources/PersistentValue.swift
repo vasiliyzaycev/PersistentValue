@@ -8,7 +8,7 @@
 import Combine
 import Foundation
 
-public final class PersistentValue<Value, ErrorType: Error>: @unchecked Sendable {
+public final class PersistentValue<Value>: @unchecked Sendable {
   public var value: Value? {
     var result: Value?
     queue.sync {
@@ -33,7 +33,7 @@ public final class PersistentValue<Value, ErrorType: Error>: @unchecked Sendable
   public convenience init<T: ValueStorage>(
     loadableValueStorage: T,
     defaultValue: Value? = nil
-  ) throws where T.Value == Value, T.ErrorType == ErrorType {
+  ) throws where T.Value == Value {
     self.init(valueStorage: loadableValueStorage, defaultValue: defaultValue)
     try self.reload()
   }
@@ -41,7 +41,7 @@ public final class PersistentValue<Value, ErrorType: Error>: @unchecked Sendable
   public convenience init<T: ValueStorage>(
     valueStorage: T,
     defaultValue: Value? = nil
-  ) where T.Value == Value, T.ErrorType == ErrorType {
+  ) where T.Value == Value {
     self.init(
       load: valueStorage.load,
       save: valueStorage.save,
@@ -89,12 +89,6 @@ public final class PersistentValue<Value, ErrorType: Error>: @unchecked Sendable
   /// Isn't thread safe
   public func reloadIgnoringErrors() {
     do { try reload() } catch {}
-  }
-}
-
-public extension PersistentValue {
-  func eraseToAnyError() -> PersistentValue<Value, Error> {
-    .init(load: load, save: save, defaultValue: defaultValue, value: value)
   }
 }
 

@@ -5,14 +5,14 @@
 //  Created by Vasiliy Zaytsev.
 //
 
-public final class PersistentValueStorage<Value: Codable, ErrorType: Error>: ValueStorage {
+public final class PersistentValueStorage<Value: Codable>: ValueStorage {
   private let saveValue: (Value?) throws -> Void
   private let loadValue: () throws -> Value?
 
   public init<DC: DataCoder, DS: DataStorage>(
     dataCoder: DC,
     dataStorage: DS
-  ) where DC.Value == Value, DS.ErrorType == ErrorType {
+  ) where DC.Value == Value {
     self.saveValue = { value in
       try dataStorage.save(data: try value.map(dataCoder.encode))
     }
@@ -31,7 +31,7 @@ public final class PersistentValueStorage<Value: Codable, ErrorType: Error>: Val
 }
 
 extension PersistentValueStorage {
-  public convenience init<DS: DataStorage>(dataStorage: DS) where DS.ErrorType == ErrorType {
+  public convenience init<DS: DataStorage>(dataStorage: DS) {
     self.init(dataCoder: JSONCoder<Value>(), dataStorage: dataStorage)
   }
 }

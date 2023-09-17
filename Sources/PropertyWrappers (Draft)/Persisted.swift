@@ -7,7 +7,7 @@
 
 @propertyWrapper
 public struct Persisted<Value: Codable> {
-  private let persistentValue: PersistentValue<Value, Error>
+  private let persistentValue: PersistentValue<Value>
   private let errorHandler: ErrorHandler
 
   public var wrappedValue: Value? {
@@ -23,15 +23,15 @@ public struct Persisted<Value: Codable> {
     }
   }
 
-  public var projectedValue: PersistentValue<Value, Error> {
+  public var projectedValue: PersistentValue<Value> {
     persistentValue
   }
 
-  public init<T: CertainErrorHandler, E>(
-    persistentValue: PersistentValue<Value, E>,
+  public init<T: CertainErrorHandler>(
+    persistentValue: PersistentValue<Value>,
     errorHandler: T
-  ) where T.ErrorType == E {
-    self.persistentValue = persistentValue.eraseToAnyError()
+  ) {
+    self.persistentValue = persistentValue
     self.errorHandler = errorHandler
   }
 }
