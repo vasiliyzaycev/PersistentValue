@@ -6,32 +6,28 @@
 //
 
 public final class PersistentValueStorage<Value: Codable>: ValueStorage {
-  private let saveValue: (Value?) throws -> Void
-  private let loadValue: () throws -> Value?
+  private let dataCoder: any DataCoder<Value>
+  private let dataStorage: any DataStorage
 
-  public init<DC: DataCoder, DS: DataStorage>(
-    dataCoder: DC,
-    dataStorage: DS
-  ) where DC.Value == Value {
-    self.saveValue = { value in
-      try dataStorage.save(data: try value.map(dataCoder.encode))
-    }
-    self.loadValue = {
-      try dataStorage.loadData().map(dataCoder.decode(from:))
-    }
+  public init(
+    dataCoder: some DataCoder<Value>,
+    dataStorage: some DataStorage
+  ) {
+    self.dataCoder = dataCoder
+    self.dataStorage = dataStorage
   }
 
   public func save(_ value: Value?) throws {
-    try saveValue(value)
+    try dataStorage.save(data: try value.map(dataCoder.encode))
   }
 
   public func load() throws -> Value? {
-    try loadValue()
+    try dataStorage.loadData().map(dataCoder.decode(from:))
   }
 }
 
 extension PersistentValueStorage {
-  public convenience init<DS: DataStorage>(dataStorage: DS) {
+  public convenience init(dataStorage: some DataStorage) {
     self.init(dataCoder: JSONCoder<Value>(), dataStorage: dataStorage)
   }
 }

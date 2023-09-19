@@ -6,8 +6,6 @@
 //
 
 public final class InMemoryValueStorage<Value: Codable>: ValueStorage {
-  public typealias ErrorType = Never
-
   private var value: Value?
 
   public init(value: Value? = nil) {

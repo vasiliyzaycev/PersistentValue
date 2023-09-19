@@ -34,7 +34,7 @@ public struct PersistingPublished<V: Codable> {
       return wrapper.wrappedValue
     }
     set {
-      var wrapper = instance[keyPath: storageKeyPath]
+      let wrapper = instance[keyPath: storageKeyPath]
       wrapper.setParent(instance)
       wrapper.wrappedValue = newValue
     }

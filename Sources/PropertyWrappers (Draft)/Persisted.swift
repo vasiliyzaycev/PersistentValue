@@ -14,7 +14,7 @@ public struct Persisted<Value: Codable> {
     get {
       persistentValue.value
     }
-    set {
+    nonmutating set {
       do {
         try persistentValue.update(value: newValue)
       } catch {
@@ -27,9 +27,9 @@ public struct Persisted<Value: Codable> {
     persistentValue
   }
 
-  public init<T: CertainErrorHandler>(
+  public init(
     persistentValue: PersistentValue<Value>,
-    errorHandler: T
+    errorHandler: ErrorHandler
   ) {
     self.persistentValue = persistentValue
     self.errorHandler = errorHandler

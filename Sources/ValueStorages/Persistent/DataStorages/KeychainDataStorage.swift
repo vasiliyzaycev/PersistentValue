@@ -7,9 +7,14 @@
 
 import Foundation
 
-public final class KeychainDataStorage: DataStorage {
-  public typealias ErrorType = KeychainDataStorageError
+public enum KeychainDataStorageError: Error {
+  case lookup(OSStatus)
+  case update(OSStatus)
+  case insert(OSStatus)
+  case delete(OSStatus)
+}
 
+public struct KeychainDataStorage: DataStorage {
   private let valueKey: String
   private let service: String
   private let accessGroup: String?
@@ -43,13 +48,6 @@ public final class KeychainDataStorage: DataStorage {
     guard status == errSecSuccess else { throw KeychainDataStorageError.lookup(status) }
     return data as? Data
   }
-}
-
-public enum KeychainDataStorageError: Error {
-  case lookup(OSStatus)
-  case update(OSStatus)
-  case insert(OSStatus)
-  case delete(OSStatus)
 }
 
 private extension KeychainDataStorage {

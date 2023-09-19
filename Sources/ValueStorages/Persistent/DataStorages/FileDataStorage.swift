@@ -7,9 +7,14 @@
 
 import Foundation
 
-public final class FileDataStorage: DataStorage {
-  public typealias ErrorType = FileDataStorageError
+public struct FileDataStorageError: Error {
+  public let reason: Error
+  public let isFileExists: Bool
+  public let isDirectory: Bool
+  public let attributes: [FileAttributeKey: Any]?
+}
 
+public final class FileDataStorage: DataStorage {
   private let fileManager: FileManager
   private let fileURL: URL
 
@@ -41,27 +46,6 @@ public final class FileDataStorage: DataStorage {
       throw wrap(error: error)
     }
   }
-}
-
-public struct FileDataStorageError: Error {
-  let reason: Error
-  let isFileExists: Bool
-  let isDirectory: Bool
-  let attributes: [FileAttributeKey: Any]?
-
-  // swiftlint:disable strict_fileprivate
-  fileprivate init(
-    reason: Error,
-    isFileExists: Bool,
-    isDirectory: Bool,
-    attributes: [FileAttributeKey: Any]?
-  ) {
-    self.reason = reason
-    self.isFileExists = isFileExists
-    self.isDirectory = isDirectory
-    self.attributes = attributes
-  }
-  // swiftlint:enable strict_fileprivate
 }
 
 private extension FileDataStorage {

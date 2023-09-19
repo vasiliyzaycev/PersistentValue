@@ -7,7 +7,7 @@
 
 import Foundation
 
-public protocol DataCoder {
+public protocol DataCoder<Value> {
   associatedtype Value: Codable
 
   func decode(from: Data) throws -> Value

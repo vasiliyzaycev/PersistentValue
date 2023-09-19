@@ -7,9 +7,12 @@
 
 import Foundation
 
-public final class UserDefaultsDataStorage: DataStorage {
-  public typealias ErrorType = UserDefaultsDataStorageError
+public enum UserDefaultsDataStorageError: Error {
+  case failedSynchronize
+  case storageDataTypeMismatch
+}
 
+public final class UserDefaultsDataStorage: DataStorage {
   private let userDefaults: UserDefaults
   private let valueKey: String
 
@@ -34,9 +37,4 @@ public final class UserDefaultsDataStorage: DataStorage {
     }
     return data
   }
-}
-
-public enum UserDefaultsDataStorageError: Error {
-  case failedSynchronize
-  case storageDataTypeMismatch
 }
