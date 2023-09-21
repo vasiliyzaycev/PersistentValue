@@ -8,7 +8,7 @@
 import Combine
 import Foundation
 
-public final class PersistentValue<Value>: @unchecked Sendable {
+public final class PersistentValue<Value: Codable>: @unchecked Sendable {
   public var value: Value? {
     var result: Value?
     queue.sync {
@@ -18,11 +18,10 @@ public final class PersistentValue<Value>: @unchecked Sendable {
   }
   public var valuePublisher: AnyPublisher<Value?, Never> { valueSubject.eraseToAnyPublisher() }
 
-  private var _value: Value? { didSet { valueSubject.value = wrappedValue } }
+  private var _value: Value? = nil { didSet { valueSubject.value = wrappedValue } }
   private var wrappedValue: Value? { _value ?? defaultValue }
+  private let valueStorage: any ValueStorage<Value>
   private let valueSubject: CurrentValueSubject<Value?, Never>
-  private let load: () throws -> Value?
-  private let save: (Value?) throws -> Void
   private let defaultValue: Value?
   private let queue = DispatchQueue(
     label: "com.queue.value.persistent",
@@ -30,36 +29,21 @@ public final class PersistentValue<Value>: @unchecked Sendable {
     attributes: .concurrent
   )
 
-  public convenience init<T: ValueStorage>(
-    loadableValueStorage: T,
+  public convenience init(
+    loadableValueStorage: some ValueStorage<Value>,
     defaultValue: Value? = nil
-  ) throws where T.Value == Value {
+  ) throws {
     self.init(valueStorage: loadableValueStorage, defaultValue: defaultValue)
     try self.reload()
   }
 
-  public convenience init<T: ValueStorage>(
-    valueStorage: T,
-    defaultValue: Value? = nil
-  ) where T.Value == Value {
-    self.init(
-      load: valueStorage.load,
-      save: valueStorage.save,
-      defaultValue: defaultValue
-    )
-  }
-
-  private init(
-    load: @escaping () throws -> Value?,
-    save: @escaping (Value?) throws -> Void,
-    defaultValue: Value?,
-    value: Value? = nil
+  public init(
+    valueStorage: some ValueStorage<Value>,
+    defaultValue: Value?
   ) {
-    self.load = load
-    self.save = save
-    self.defaultValue = defaultValue
+    self.valueStorage = valueStorage
     self.valueSubject = .init(defaultValue)
-    self._value = value
+    self.defaultValue = defaultValue
     valueSubject.value = wrappedValue
   }
 
@@ -83,7 +67,7 @@ public final class PersistentValue<Value>: @unchecked Sendable {
 
   /// Isn't thread safe
   public func reload() throws {
-    self._value = try load()
+    self._value = try valueStorage.load()
   }
 
   /// Isn't thread safe
@@ -104,7 +88,7 @@ private extension PersistentValue {
 
   private func setup(newValue: Value?, force: Bool) throws {
     do {
-      try save(newValue)
+      try valueStorage.save(newValue)
     } catch {
       if !force { throw error }
     }

@@ -5,7 +5,7 @@
 //  Created by Vasiliy Zaytsev.
 //
 
-public protocol ValueStorage: AnyObject {
+public protocol ValueStorage<Value>: AnyObject {
   associatedtype Value: Codable
 
   func save(_ value: Value?) throws
