@@ -1,8 +1,5 @@
 //
-//  ValueStorage.swift
-//  PersistentValue
-//
-//  Created by Vasiliy Zaytsev.
+// Copyright © 2023 Vasiliy Zaycev. All rights reserved.
 //
 
 public protocol ValueStorage<Value>: AnyObject {

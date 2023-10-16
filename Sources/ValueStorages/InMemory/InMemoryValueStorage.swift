@@ -1,8 +1,5 @@
 //
-//  InMemoryValueStorage.swift
-//  PersistentValue
-//
-//  Created by Vasiliy Zaytsev.
+// Copyright © 2023 Vasiliy Zaycev. All rights reserved.
 //
 
 public final class InMemoryValueStorage<Value: Codable>: ValueStorage {
