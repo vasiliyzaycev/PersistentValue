@@ -15,7 +15,7 @@ public final class FileDataStorage: DataStorage {
   private let fileManager: FileManager
   private let fileURL: URL
 
-  init(
+  public init(
     fileURL: URL,
     fileManager: FileManager = .default
   ) {
