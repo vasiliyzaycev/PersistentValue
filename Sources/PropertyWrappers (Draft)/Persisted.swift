@@ -3,7 +3,7 @@
 //
 
 @propertyWrapper
-public struct Persisted<Value: Codable> {
+public struct Persisted<Value: Codable>: Sendable {
   private let persistentValue: PersistentValue<Value>
   private let errorHandler: ErrorHandler
 

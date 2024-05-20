@@ -3,10 +3,10 @@
 //
 
 public struct CustomErrorHandler: ErrorHandler {
-  private let handler: (Error) -> Void
+  private let handler: @Sendable (Error) -> Void
   
   public init(
-    handler: @escaping (Error) -> Void
+    handler: @escaping @Sendable (Error) -> Void
   ) {
     self.handler = handler
   }

@@ -5,12 +5,12 @@
 public struct StorageErrorHandler<T: Error>: CertainErrorHandler {
   public typealias ErrorType = T
 
-  public let currentHandler: (T) -> Void
+  public let currentHandler: @Sendable (T) -> Void
   public let reserveHandler: ErrorHandler
 
   public init(
     reserveHandler: ErrorHandler = DefaultErrorHandler(),
-    _ currentHandler: @escaping (T) -> Void
+    _ currentHandler: @escaping @Sendable (T) -> Void
   ) {
     self.reserveHandler = reserveHandler
     self.currentHandler = currentHandler

@@ -2,7 +2,7 @@
 // Copyright © 2023 Vasiliy Zaycev. All rights reserved.
 //
 
-public protocol ErrorHandler {
+public protocol ErrorHandler: Sendable {
   func handle(_ error: Error)
 }
 
