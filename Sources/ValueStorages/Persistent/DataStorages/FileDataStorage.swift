@@ -4,7 +4,7 @@
 
 import Foundation
 
-public struct FileDataStorageError: Error {
+public struct FileDataStorageError: Error, @unchecked Sendable {
   public let reason: Error
   public let isFileExists: Bool
   public let isDirectory: Bool

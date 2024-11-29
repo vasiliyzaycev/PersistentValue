@@ -41,7 +41,6 @@ public final class PersistentValue<Value: Codable>: @unchecked Sendable {
     self.valueStorage = valueStorage
     self.valueSubject = .init(defaultValue)
     self.defaultValue = defaultValue
-    valueSubject.value = wrappedValue
   }
 
   public func update(
