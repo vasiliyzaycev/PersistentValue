@@ -15,7 +15,13 @@ public final class PersistentValue<Value: Codable>: @unchecked Sendable {
   }
   public var valuePublisher: AnyPublisher<Value?, Never> { valueSubject.eraseToAnyPublisher() }
 
-  private var _value: Value? = nil { didSet { valueSubject.value = wrappedValue } }
+  private var _value: Value? = nil {
+    didSet {
+      Task { @MainActor in
+        valueSubject.value = wrappedValue
+      }
+    }
+  }
   private var wrappedValue: Value? { _value ?? defaultValue }
   private let valueStorage: any ValueStorage<Value>
   private let valueSubject: CurrentValueSubject<Value?, Never>
