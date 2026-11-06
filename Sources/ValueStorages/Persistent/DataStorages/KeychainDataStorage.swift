@@ -15,15 +15,18 @@ public struct KeychainDataStorage: DataStorage {
   private let valueKey: String
   private let service: String
   private let accessGroup: String?
+  private let accessibility: KeychainAccessibility
 
   public init(
     valueKey: String,
     service: String,
-    accessGroup: String? = nil
+    accessGroup: String? = nil,
+    accessibility: KeychainAccessibility = .afterFirstUnlock
   ) {
     self.valueKey = valueKey
     self.service = service
     self.accessGroup = accessGroup
+    self.accessibility = accessibility
   }
 
   public func save(data: Data?) throws {
@@ -90,8 +93,19 @@ private extension KeychainDataStorage {
 
   private func keyInsertAttributes(data: Data) -> [CFString: Any] {
     var result = keyAttributes()
-    result[kSecAttrAccessible] = kSecAttrAccessibleAfterFirstUnlock
+    result[kSecAttrAccessible] = accessibility.attribute
     result[kSecValueData] = data
     return result
+  }
+}
+
+private extension KeychainAccessibility {
+  var attribute: CFString {
+    switch self {
+    case .afterFirstUnlock:               kSecAttrAccessibleAfterFirstUnlock
+    case .afterFirstUnlockThisDeviceOnly: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
+    case .whenUnlocked:                   kSecAttrAccessibleWhenUnlocked
+    case .whenUnlockedThisDeviceOnly:     kSecAttrAccessibleWhenUnlockedThisDeviceOnly
+    }
   }
 }
